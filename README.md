@@ -1,3 +1,5 @@
+![CI](https://github.com/SandraHtlr1806/cd-mcm-exercise-Hartlauer/actions/workflows/ci.yml/badge.svg)
+
 # Exercise 2: Microservice Architecture, Docker & GitHub Actions
 
 **Course:** Continuous Delivery in Agile Software Development (Master)
