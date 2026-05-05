@@ -102,7 +102,7 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 func respondJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	_ = json.NewEncoder(w).Encode(payload)
+	json.NewEncoder(w).Encode(payload)
 }
 
 func respondError(w http.ResponseWriter, code int, message string) {
