@@ -62,23 +62,101 @@ Benefits:
 
 ## 5. CRUD Testing
 
-The API exposes the following endpoints:
+The API was tested using curl commands.
 
-- POST /products (create)
-- GET /products (list)
-- GET /products/{id} (retrieve)
-- PUT /products/{id} (update)
-- DELETE /products/{id} (delete)
-
----
-
-## 6. Persistence Test
-
-To verify persistence:
-
+### Health Check
 ```bash
-docker compose down
-docker compose up --build
+curl http://localhost:8080/health
 ```
 
-If PostgreSQL is used correctly, data should persist after restart.
+Response:
+```json
+{"status":"ok"}
+```
+
+### Create Products
+```bash
+curl -X POST http://localhost:8080/products \
+-H "Content-Type: application/json" \
+-d '{"name":"Laptop","price":999.99}'
+```
+
+Response:
+```json
+{"id":1,"name":"Laptop","price":999.99}
+```
+
+```bash
+curl -X POST http://localhost:8080/products \
+-H "Content-Type: application/json" \
+-d '{"name":"Maus","price":29.99}'
+```
+
+Response:
+```json
+{"id":2,"name":"Maus","price":29.99}
+```
+
+```bash
+curl -X POST http://localhost:8080/products \
+-H "Content-Type: application/json" \
+-d '{"name":"Tastatur","price":59.99}'
+```
+
+Response:
+```json
+{"id":3,"name":"Tastatur","price":59.99}
+```
+
+### Read Products
+
+```bash
+curl http://localhost:8080/products
+```
+
+Response:
+```json
+[
+  {"id":1,"name":"Laptop","price":999.99},
+  {"id":2,"name":"Maus","price":29.99},
+  {"id":3,"name":"Tastatur","price":59.99}
+]
+```
+
+### Update Products
+
+```bash
+curl -X PUT http://localhost:8080/products/1 \
+-H "Content-Type: application/json" \
+-d '{"name":"Laptop Pro","price":1299.99}'
+```
+
+Response:
+```json
+{"id":1,"name":"Laptop Pro","price":1299.99}
+```
+
+### Delete Products
+
+```bash
+curl -X DELETE http://localhost:8080/products/3
+```
+
+Response:
+```json
+{"result":"success"}
+```
+
+### Final State
+
+```bash
+curl http://localhost:8080/products
+```
+
+Response:
+```json
+[
+  {"id":1,"name":"Laptop Pro","price":1299.99},
+  {"id":2,"name":"Maus","price":29.99}
+]
+```
