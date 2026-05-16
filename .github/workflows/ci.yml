@@ -55,7 +55,7 @@ jobs:
         env:
           GOVERSION: "1.26"
         with:
-          version: v1.64.5
+          version: latest
 
   docker-build:
     runs-on: ubuntu-latest
