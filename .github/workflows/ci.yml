@@ -52,8 +52,11 @@ jobs:
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v5
+        env:
+          GOVERSION: "1.25"
         with:
           version: latest
+          args: --out-format=colored-line-number
 
   docker-build:
     runs-on: ubuntu-latest
