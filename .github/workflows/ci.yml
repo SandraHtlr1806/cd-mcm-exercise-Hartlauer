@@ -27,7 +27,14 @@ jobs:
         run: go mod download
 
       - name: Run tests with coverage
-        run: go test -v -coverprofile=coverage.out ./...
+        run: |
+          go test -v -coverprofile=coverage.out ./...
+          # Berechne die totale Coverage
+          total_cov=$(go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+')
+          echo "Total Coverage: $total_cov%"
+          
+          # Check gegen 80% (bc muss evtl. installiert sein, oder wir nutzen awk)
+          awk -v cov="$total_cov" 'BEGIN { if (cov < 80) { print "Coverage below 80%!"; exit 1 } }'
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
