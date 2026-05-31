@@ -8,10 +8,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }} # ubuntu-latest
     strategy:
       matrix:
-        go-version: ["1.26"]
+        go-version: [1.25, 1.26]
+        os: [ubuntu-latest, macos-latest]
         # TODO: Add go-version "1.25" to the matrix for multi-version testing
 
     steps:
@@ -26,12 +27,19 @@ jobs:
         run: go mod download
 
       - name: Run tests with coverage
-        run: go test -v -coverprofile=coverage.out ./...
+        run: |
+          go test -v -coverprofile=coverage.out ./...
+          # Berechne die totale Coverage
+          total_cov=$(go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+')
+          echo "Total Coverage: $total_cov%"
+          
+          # Check gegen 80% (bc muss evtl. installiert sein, oder wir nutzen awk)
+          awk -v cov="$total_cov" 'BEGIN { if (cov < 80) { print "Coverage below 80%!"; exit 1 } }'
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.go-version }}
+          name: coverage-${{ matrix.os }}-${{ matrix.go-version }}
           path: coverage.out
 
       - name: Build
@@ -39,6 +47,20 @@ jobs:
 
   # TODO: Add lint job using golangci-lint
   # Hint: Use the golangci/golangci-lint-action@v4 action
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
 
   docker-build:
     runs-on: ubuntu-latest
